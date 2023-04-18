@@ -98,14 +98,32 @@ function displayProductivityTotals() {
         const inputElement = document.getElementById(`input-${i}`);
         if (inputElement.value.trim() !== "") {
             const productivity = inputElement.getAttribute('data-productivity');
-            productivityTotals[productivity] += 5;
+            const time = 5;
+            const score = productivity === '-2' ? -10 : productivity === '2' ? 10 : productivity;
+            productivityTotals[productivity] += time * score;
         }
     }
 
     const totalsContainer = document.getElementById("productivityTotals");
     totalsContainer.innerHTML = ['-2', '-1', '0', '1', '2']
-        .map(key => `<div style="display: inline-block; margin-right: 10px;">${key}: ${productivityTotals[key]} minutes</div>`)
-        .join("");
+        .map(key => `<div style="display: inline-block; margin-right: 10px;">Productivity ${key}: ${productivityTotals[key]} minutes</div>`)
+        .join("") + `<div style="display: inline-block; margin-right: 10px;">Total Score: ${calculateTotalScore()}</div>`;
+}
+
+function calculateTotalScore() {
+    let totalScore = 0;
+
+    for (let i = 0; i < 24 * 60; i += 5) {
+        const inputElement = document.getElementById(`input-${i}`);
+        if (inputElement.value.trim() !== "") {
+            const productivity = inputElement.getAttribute('data-productivity');
+            const time = 5;
+            const score = productivity === '-2' ? -10 : productivity === '2' ? 10 : productivity;
+            totalScore += time * score;
+        }
+    }
+
+    return totalScore;
 }
 
 function updateRowColor(inputElement, productivity) {
