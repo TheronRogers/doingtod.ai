@@ -99,14 +99,13 @@ function displayProductivityTotals() {
         if (inputElement.value.trim() !== "") {
             const productivity = inputElement.getAttribute('data-productivity');
             const time = 5;
-            const score = productivity === '-2' ? -10 : productivity === '2' ? 10 : productivity;
-            productivityTotals[productivity] += time * score;
+            productivityTotals[productivity] += time;
         }
     }
 
     const totalsContainer = document.getElementById("productivityTotals");
     totalsContainer.innerHTML = ['-2', '-1', '0', '1', '2']
-        .map(key => `<div style="display: inline-block; margin-right: 10px;">Productivity ${key}: ${productivityTotals[key]} minutes</div>`)
+        .map(key => `<div style="display: inline-block; margin-right: 10px;">${key}: ${productivityTotals[key]} minutes</div>`)
         .join("") + `<div style="display: inline-block; margin-right: 10px;">Total Score: ${calculateTotalScore()}</div>`;
 }
 
