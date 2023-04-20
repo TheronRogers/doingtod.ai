@@ -1,3 +1,29 @@
+class Task {
+    constructor(inputElement, productivity) {
+      this.inputElement = inputElement;
+      this.productivity = productivity;
+    }
+  
+    get value() {
+      return this.inputElement.value.trim();
+    }
+  
+    get time() {
+      return 5;
+    }
+  
+    get score() {
+      switch (this.productivity) {
+        case '-2':
+          return -10;
+        case '2':
+          return 10;
+        default:
+          return parseInt(this.productivity, 10);
+      }
+    }
+  }
+
 const timeColumn = document.getElementById("timeColumn");
 const calendar = document.getElementById("calendar");
 
@@ -79,7 +105,8 @@ function handleKeyDown(event, i) {
             productivity++;
         }
         inputElement.setAttribute('data-productivity', productivity);
-        updateRowColor(inputElement, productivity);
+        const task = new Task(inputElement, productivity);
+        updateRowColor(task);
         updateEmptyFieldsProductivity();
         displayProductivityTotals();
     }
@@ -98,8 +125,8 @@ function displayProductivityTotals() {
         const inputElement = document.getElementById(`input-${i}`);
         if (inputElement.value.trim() !== "") {
             const productivity = inputElement.getAttribute('data-productivity');
-            const time = 5;
-            productivityTotals[productivity] += time;
+            const task = new Task(inputElement, productivity);
+            productivityTotals[productivity] += task.time;
         }
     }
 
@@ -116,20 +143,19 @@ function calculateTotalScore() {
         const inputElement = document.getElementById(`input-${i}`);
         if (inputElement.value.trim() !== "") {
             const productivity = inputElement.getAttribute('data-productivity');
-            const time = 5;
-            const score = productivity === '-2' ? -10 : productivity === '2' ? 10 : productivity;
-            totalScore += time * score;
+            const task = new Task(inputElement, productivity);
+            totalScore += task.time * task.score;
         }
     }
 
     return totalScore;
 }
 
-function updateRowColor(inputElement, productivity) {
-    const rowContainer = inputElement.parentElement.parentElement;
+function updateRowColor(task) {
+    const rowContainer = task.inputElement.parentElement.parentElement;
 
     rowContainer.classList.remove('red', 'orange', 'white', 'green', 'blue');
-    switch (productivity) {
+    switch (task.score) {
         case -2:
             rowContainer.classList.add('red');
             break;
@@ -165,7 +191,8 @@ function updateEmptyFieldsProductivity() {
         const inputElement = document.getElementById(`input-${i}`);
         if (inputElement.value.trim() === "") {
             inputElement.setAttribute('data-productivity', previousProductivity);
-            updateRowColor(inputElement, previousProductivity);
+            const task = new Task(inputElement, previousProductivity);
+            updateRowColor(task);
         } else {
             previousProductivity = parseInt(inputElement.getAttribute('data-productivity'), 10);
         }
