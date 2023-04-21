@@ -242,13 +242,14 @@ function exportAsCSV() {
     for (let i = 0; i < 24 * 60; i += 5) {
         const inputElement = document.getElementById(`input-${i}`);
         const timeElement = document.getElementById(`time-${i}`);
+        const timerElement = document.getElementById(`timer-${i}`);
         if (inputElement && inputElement.value.trim() !== "") {
-            rows.push([timeElement.textContent, inputElement.value]);
+            rows.push([timeElement.textContent, inputElement.value, timerElement.textContent || "5", inputElement.getAttribute('data-productivity') || "0"]);
         }
     }
 
     if (rows.length > 0) {
-        const header = ["Time", "Text"];
+        const header = ["Time", "Text", "Duration", "Productivity"];
         const csvContent = [header, ...rows]
             .map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(","))
             .join("\r\n");
