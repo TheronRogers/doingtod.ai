@@ -1,28 +1,22 @@
 class Task {
     constructor(inputElement, productivity) {
-      this.inputElement = inputElement;
-      this.productivity = productivity;
+        this.inputElement = inputElement;
+        this.productivity = productivity;
     }
-  
+
     get value() {
-      return this.inputElement.value.trim();
+        return this.inputElement.value.trim();
     }
-  
+
     get time() {
-      return 5;
+        return 5;
     }
-  
+
     get score() {
-      switch (this.productivity) {
-        case '-2':
-          return -10;
-        case '2':
-          return 10;
-        default:
-          return parseInt(this.productivity, 10);
-      }
+        return productivityMap[this.productivity].value;
     }
-  }
+
+}
 
 const timeColumn = document.getElementById("timeColumn");
 const calendar = document.getElementById("calendar");
@@ -52,6 +46,7 @@ function createTimeInputs() {
         rowContainer.appendChild(timeElement);
 
         const textElement = document.createElement("div");
+        textElement.classList.add("text-input");
         textElement.innerHTML = `<input type="text" class="text-input" id="input-${i}" data-productivity="0" onkeydown="handleKeyDown(event, ${i})" onfocus="highlightTime(${i}, true)" onblur="highlightTime(${i}, false)">`;
         rowContainer.appendChild(textElement);
 
@@ -132,8 +127,9 @@ function displayProductivityTotals() {
 
     const totalsContainer = document.getElementById("productivityTotals");
     totalsContainer.innerHTML = ['-2', '-1', '0', '1', '2']
-        .map(key => `<div style="display: inline-block; margin-right: 10px;">${key}: ${productivityTotals[key]} minutes</div>`)
+        .map(key => `<div style="display: inline-block; margin-right: 10px;">${productivityMap[key].name}: ${productivityTotals[key]} minutes</div>`)
         .join("") + `<div style="display: inline-block; margin-right: 10px;">Total Score: ${calculateTotalScore()}</div>`;
+
 }
 
 function calculateTotalScore() {
@@ -155,24 +151,19 @@ function updateRowColor(task) {
     const rowContainer = task.inputElement.parentElement.parentElement;
 
     rowContainer.classList.remove('red', 'orange', 'white', 'green', 'blue');
-    switch (task.score) {
-        case -2:
-            rowContainer.classList.add('red');
-            break;
-        case -1:
-            rowContainer.classList.add('orange');
-            break;
-        case 0:
-            rowContainer.classList.add('white');
-            break;
-        case 1:
-            rowContainer.classList.add('green');
-            break;
-        case 2:
-            rowContainer.classList.add('blue');
-            break;
-    }
+
+    // Get the color from productivityMap for the value of the productivity
+    rowContainer.classList.add(productivityMap[task.productivity].color);
 }
+
+// Create a map of productivity items with colors and values
+const productivityMap = {
+    '-2': { name: 'Very Unproductive', color: 'red', value: -10 },
+    '-1': { name: 'Unproductive', color: 'orange', value: -1 },
+    '0': { name: 'Neutral', color: 'white', value: 0 },
+    '1': { name: 'Productive', color: 'green', value: 1 },
+    '2': { name: 'Very Productive', color: 'blue', value: 10 },
+};
 
 function highlightTime(i, isHighlighted) {
     const associatedTimeElement = document.getElementById(`time-${i}`);
